@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль - Kolovrat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .profile-section {
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+        .profile-card, .orders-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .nav-pills .nav-link {
+            color: #333;
+        }
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-color);
+        }
+        .profile-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .orders-list {
+            margin-top: 20px;
+        }
+        .order-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигационная панель -->
+    <nav class="navbar">
+        <a href="main.html" class="navbar-brand">Kolovrat</a>
+        <div class="nav-links">
+            <a href="main.html" class="nav-link">Главная</a>
+            <a href="catalog.html" class="nav-link">Каталог</a>
+            <a href="main.html#about" class="nav-link">О нас</a>
+            <a href="main.html#contacts" class="nav-link">Контакты</a>
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="btn btn-outline-light" id="logoutBtn">
+                Выйти
+            </button>
+        </div>
+    </nav>
+
+    <!-- Profile Section -->
+    <section class="profile-section">
+        <div class="container">
+            <div class="row">
+                <!-- Левая колонка - Информация о пользователе -->
+                <div class="col-md-4">
+                    <div class="profile-card">
+                        <h2 class="text-center mb-4">Профиль</h2>
+                        <div class="profile-info">
+                            <div class="mb-3">
+                                <label class="form-label">Имя</label>
+                                <input type="text" class="form-control" id="firstName" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Фамилия</label>
+                                <input type="text" class="form-control" id="lastName" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Адрес</label>
+                                <input type="text" class="form-control" id="address" readonly>
+                            </div>
+                        </div>
+                        <div class="profile-actions">
+                            <button class="btn btn-primary" id="editProfileBtn">Редактировать</button>
+                            <button class="btn btn-danger" id="deleteAccountBtn">Удалить аккаунт</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Правая колонка - Заказы -->
+                <div class="col-md-8">
+                    <div class="orders-card">
+                        <h2 class="mb-4">Мои заказы</h2>
+                        <div class="orders-list" id="ordersList">
+                            <!-- Заказы будут загружены динамически -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Модальное окно редактирования профиля -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Редактировать профиль</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProfileForm">
+                        <div class="mb-3">
+                            <label class="form-label">Имя</label>
+                            <input type="text" class="form-control" name="firstName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Фамилия</label>
+                            <input type="text" class="form-control" name="lastName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Адрес</label>
+                            <input type="text" class="form-control" name="address" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Сохранить изменения</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно удаления аккаунта -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Удалить аккаунт</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.</p>
+                    <form id="deleteAccountForm">
+                        <div class="mb-3">
+                            <label class="form-label">Введите пароль для подтверждения</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100">Удалить аккаунт</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Проверка авторизации
+        async function checkAuth() {
+            try {
+                const response = await fetch('api/check_auth.php');
+                const data = await response.json();
+                
+                if (!data.isLoggedIn) {
+                    window.location.href = 'main.html';
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Error:', error);
+                window.location.href = 'main.html';
+                return false;
+            }
+        }
+
+        // Загрузка данных профиля
+        async function loadProfile() {
+            if (!await checkAuth()) return;
+
+            try {
+                const response = await fetch('api/get_profile.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('firstName').value = data.first_name;
+                    document.getElementById('lastName').value = data.last_name;
+                    document.getElementById('email').value = data.email;
+                    document.getElementById('address').value = data.address;
+
+                    // Заполняем форму редактирования
+                    const editForm = document.getElementById('editProfileForm');
+                    editForm.elements['firstName'].value = data.first_name;
+                    editForm.elements['lastName'].value = data.last_name;
+                    editForm.elements['email'].value = data.email;
+                    editForm.elements['address'].value = data.address;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ошибка при загрузке данных профиля');
+            }
+        }
+
+        // Загрузка заказов
+        async function loadOrders() {
+            if (!await checkAuth()) return;
+
+            try {
+                const response = await fetch('api/get_orders.php');
+                const data = await response.json();
+                
+                const ordersList = document.getElementById('ordersList');
+                if (data.success && data.orders.length > 0) {
+                    ordersList.innerHTML = data.orders.map(order => `
+                        <div class="order-item">
+                            <h5>Заказ #${order.id}</h5>
+                            <p>Дата: ${order.date}</p>
+                            <p>Статус: ${order.status}</p>
+                            <p>Сумма: ${order.total} ₽</p>
+                        </div>
+                    `).join('');
+                } else {
+                    ordersList.innerHTML = '<p class="text-center">У вас пока нет заказов</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                ordersList.innerHTML = '<p class="text-center text-danger">Ошибка при загрузке заказов</p>';
+            }
+        }
+
+        // Инициализация модальных окон
+        const editProfileModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+        const deleteAccountModal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
+
+        // Обработчики событий
+        document.getElementById('editProfileBtn').addEventListener('click', () => {
+            editProfileModal.show();
+        });
+
+        document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+            deleteAccountModal.show();
+        });
+
+        // Обработка формы редактирования
+        document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('api/update_profile.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    editProfileModal.hide();
+                    await loadProfile();
+                    alert('Профиль успешно обновлен');
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ошибка при обновлении профиля');
+            }
+        });
+
+        // Обработка формы удаления аккаунта
+        document.getElementById('deleteAccountForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('api/delete_account.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = 'main.html';
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ошибка при удалении аккаунта');
+            }
+        });
+
+        // Загрузка данных при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProfile();
+            loadOrders();
+        });
+    </script>
+</body>
+</html> 
